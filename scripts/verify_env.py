@@ -81,8 +81,8 @@ try:
     from src.personas import label_all_personas
     safe_traj  = {"annualized_return": 0.08, "sharpe": 0.9, "max_drawdown": 0.07,
                   "volatility": 0.10, "calmar": 1.1, "turnover": 0.05}
-    risky_traj = {"annualized_return": 0.20, "sharpe": 0.7, "max_drawdown": 0.35,
-                  "volatility": 0.28, "calmar": 0.6, "turnover": 0.15}
+    risky_traj = {"annualized_return": 0.20, "sharpe": 0.7, "max_drawdown": 0.25,
+                  "volatility": 0.28, "calmar": 0.8, "turnover": 0.15}
     labels = label_all_personas(safe_traj, risky_traj)
     print(f"    ✓  labels = {labels}")
     assert labels["conservative"] == 1, "Conservative should prefer safe trajectory"

@@ -50,10 +50,10 @@ drive.mount('/content/drive')
 
 | Member | Primary Role |
 |---|---|
-| [You] | Repo lead · `src/` architecture · PPO base training |
-| Teammate A | Data pipeline · Env validation · Preference labeling |
-| Teammate B | Reward model training · RLHF data generation |
-| Teammate C | RLHF fine-tuning · Evaluation · Visualization · Report |
+| Teammate A | Repo lead · `src/` architecture · PPO base training |
+| Teammate B | Data pipeline · Env validation · Preference labeling |
+| Teammate C | Reward model training · RLHF data generation |
+| Teammate D | RLHF fine-tuning · Evaluation · Visualization · Report |
 
 ## Due dates
 
