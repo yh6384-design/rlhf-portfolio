@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+dist/
+build/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb~
+
+# Data (cached locally, pushed to Drive instead)
+data/*.parquet
+data/*.csv
+
+# Model checkpoints (pushed to Drive)
+results/checkpoints/*.zip
+results/checkpoints/*.pt
+
+# But keep the folder structure
+!data/.gitkeep
+!results/figures/.gitkeep
+!results/checkpoints/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
+
+# TensorBoard logs
+runs/
+
+# IDE
+.vscode/
+.idea/
