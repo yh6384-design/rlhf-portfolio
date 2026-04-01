@@ -30,7 +30,7 @@ DOW30_TICKERS = [
     "AAPL", "AMGN", "AXP", "BA",  "CAT",  "CRM",  "CSCO", "CVX",
     "DIS",  "DOW",  "GS",  "HD",  "HON",  "IBM",  "INTC", "JNJ",
     "JPM",  "KO",   "MCD", "MMM", "MRK",  "MSFT", "NKE",  "PG",
-    "TRV",  "UNH",  "V",   "VZ",  "WBA",  "WMT",
+    "TRV",  "UNH",  "V",   "VZ",  "AMZN",  "WMT",
 ]
 
 TRANSACTION_COST = 0.001   # 0.1%
