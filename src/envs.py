@@ -137,7 +137,8 @@ def make_env(
         stock_dim=len(DOW30_TICKERS),
         hmax=1.0,                           # max weight per asset (enforced via softmax)
         initial_amount=INITIAL_CAPITAL,
-        transaction_cost_pct=TRANSACTION_COST,
+        buy_cost_pct=TRANSACTION_COST,
+        sell_cost_pct=TRANSACTION_COST,
         reward_scaling=1e-4,
         state_space=len(DOW30_TICKERS) * 9 + len(DOW30_TICKERS),   # 300-dim state
         action_space=len(DOW30_TICKERS),
