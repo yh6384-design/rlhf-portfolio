@@ -77,9 +77,24 @@ class RLHFRewardWrapper(gym.Wrapper):
     def step(self, action):
         obs, base_reward, terminated, truncated, info = self.env.step(action)
 
-        # Accumulate returns/weights into rolling window
-        daily_return = info.get("daily_return", base_reward)
-        weights      = info.get("portfolio_weights", np.zeros(len(DOW30_TICKERS)))
+        # Extract portfolio value, prices, shares from observation
+        # obs layout: [portfolio_value(1), prices(30), shares(30), features(300)]
+        n = len(DOW30_TICKERS)
+        portfolio_value = float(obs[0])
+        prices          = np.array(obs[1:n+1], dtype=float)
+        shares          = np.array(obs[n+1:2*n+1], dtype=float)
+
+        # Compute daily return from reward (base_reward = scaled return)
+        daily_return = float(base_reward) / 1e-4  # undo reward_scaling
+
+        # Compute portfolio weights from shares and prices
+        stock_values = shares * prices
+        total_value  = stock_values.sum()
+        if total_value > 0:
+            weights = stock_values / total_value
+        else:
+            weights = np.ones(n) / n
+
         self._ret_window.append(daily_return)
         self._wgt_window.append(weights)
 
@@ -141,7 +156,7 @@ def make_env(
         buy_cost_pct=TRANSACTION_COST,
         sell_cost_pct=TRANSACTION_COST,
         reward_scaling=1e-4,
-        state_space=len(DOW30_TICKERS) * 10 + len(DOW30_TICKERS),  # 330-dim state
+        state_space=1 + len(DOW30_TICKERS) + len(DOW30_TICKERS) + len(DOW30_TICKERS) * 10,  # 361-dim state
         action_space=len(DOW30_TICKERS),
         tech_indicator_list=[
             "close", "volume",
