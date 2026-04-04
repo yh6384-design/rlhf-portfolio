@@ -153,8 +153,8 @@ def make_env(
         hmax=1000,                          # max shares to trade per stock per day
         initial_amount=INITIAL_CAPITAL,
         num_stock_shares=[0]*len(DOW30_TICKERS),
-        buy_cost_pct=TRANSACTION_COST,
-        sell_cost_pct=TRANSACTION_COST,
+        buy_cost_pct=[TRANSACTION_COST] * len(DOW30_TICKERS),
+        sell_cost_pct=[TRANSACTION_COST] * len(DOW30_TICKERS),
         reward_scaling=1e-4,
         state_space=1 + len(DOW30_TICKERS) + len(DOW30_TICKERS) + len(DOW30_TICKERS) * 10,  # 361-dim state
         action_space=len(DOW30_TICKERS),
