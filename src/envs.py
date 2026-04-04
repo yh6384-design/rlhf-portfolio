@@ -141,9 +141,10 @@ def make_env(
         buy_cost_pct=TRANSACTION_COST,
         sell_cost_pct=TRANSACTION_COST,
         reward_scaling=1e-4,
-        state_space=len(DOW30_TICKERS) * 9 + len(DOW30_TICKERS),   # 300-dim state
+        state_space=len(DOW30_TICKERS) * 10 + len(DOW30_TICKERS),  # 330-dim state
         action_space=len(DOW30_TICKERS),
         tech_indicator_list=[
+            "close", "volume",
             "close_1d_ret", "close_5d_ret", "close_20d_ret",
             "vol_20d", "vol_60d", "macd", "rsi_14", "volume_ratio",
         ],
