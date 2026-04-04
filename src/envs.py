@@ -150,7 +150,7 @@ def make_env(
     env_kwargs = dict(
         df=df,
         stock_dim=len(DOW30_TICKERS),
-        hmax=1.0,                           # max weight per asset (enforced via softmax)
+        hmax=1000,                          # max shares to trade per stock per day
         initial_amount=INITIAL_CAPITAL,
         num_stock_shares=[0]*len(DOW30_TICKERS),
         buy_cost_pct=TRANSACTION_COST,
