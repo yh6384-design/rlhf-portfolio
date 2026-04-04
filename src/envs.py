@@ -137,6 +137,7 @@ def make_env(
         stock_dim=len(DOW30_TICKERS),
         hmax=1.0,                           # max weight per asset (enforced via softmax)
         initial_amount=INITIAL_CAPITAL,
+        num_stock_shares=[0]*len(DOW30_TICKERS)
         buy_cost_pct=TRANSACTION_COST,
         sell_cost_pct=TRANSACTION_COST,
         reward_scaling=1e-4,
