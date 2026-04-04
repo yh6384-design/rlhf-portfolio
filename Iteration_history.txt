@@ -1,2 +1,10 @@
 Time Name Source Details
-2026/04/20 Leo src/envs.py transaction_cost_pct deleted and buy_cost_pct & sell_cost_pct added due to FinRL version incompatible.
+2026/04/20 Leo src/envs.py transaction_cost_pct deleted and buy_cost_pct & sell_cost_pct added due to FinRL version incompatible.2026/03/27 Nancy notebooks/01_data.ipynb Upgraded yfinance from 0.2.66 to latest to fix batch download failure (all 30 tickers returning YFTzMissingError).
+2026/03/27 Nancy src/envs.py Replaced WBA with AMZN in DOW30_TICKERS list (WBA delisted from Dow 30 in 2024).
+2026/03/27 Nancy scripts/verify_env.py Fixed aggressive persona test fixture — risky trajectory drawdown was 35% which exceeded the 30% cap, changed to 25%.
+2026/03/27 Nancy notebooks/01_data.ipynb Fixed DOW Inc. pre-IPO gap (IPO 2019-03-20) — bfilled close/volume back to 2010, filled DOW RSI NaNs with neutral value 50.0.
+2026/03/28 Nancy src/envs.py Updated state_space from 300 to 330 then to 361 — FinRL state includes cash(1) + prices(30) + shares(30) + features(30x10) = 361.
+2026/03/28 Nancy src/envs.py Updated tech_indicator_list to include close and volume (10 features total, up from 8).
+2026/03/28 Nancy src/envs.py Updated RLHFRewardWrapper.step() to extract daily_return and portfolio_weights from observation directly instead of info dict (FinRL returns empty info).
+2026/03/28 Nancy src/envs.py Changed hmax from 1.0 to 1000 — hmax is max shares per trade not a weight cap; 1.0 caused zero rewards as trades were negligible.
+2026/03/28 Nancy src/envs.py Changed buy_cost_pct and sell_cost_pct from single float to list of 30 floats — FinRL indexes cost_pct per stock, single float caused TypeError.
