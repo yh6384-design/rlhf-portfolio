@@ -12,3 +12,4 @@ Time Name Source Details
 2026/04/03 Nancy src/envs.py Changed hmax from 1.0 to 1000 — hmax is max shares per trade not a weight cap; 1.0 caused zero rewards.
 2026/04/03 Nancy src/envs.py Changed buy_cost_pct and sell_cost_pct from single float to list of 30 floats — FinRL indexes cost_pct per stock, single float caused TypeError.
 2026/04/04 Nancy 03_base_training.ipynb Trained base PPO agent for 500k timesteps across 3 seeds. Best val Sharpe scores: 1.21, 1.21, 0.40 (mean 0.94). All 3 checkpoints saved to Drive at results/checkpoints/base_agent_seed{1,2,3}.zip. Next step should use base_agent_seed2.zip (best val Sharpe = 1.2097) for preference data generation in the next step.
+2026/04/06 Leo 03_rlhf_data.ipynb Build PPO trajectories with base_agent_seed2.zip and create preference dataset. All data saved to /Project/data/preferences.parquet and /Project/data/trajectory.parquet
