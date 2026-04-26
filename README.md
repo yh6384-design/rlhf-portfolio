@@ -1,5 +1,5 @@
 # RLHF Portfolio Management
-**DS-GA 3001 · Reinforcement Learning · Spring 2026 · Team Wall St RL**
+
 
 Investor-aligned portfolio management via Reinforcement Learning with Human Feedback (RLHF).  
 An RL agent learns investor-specific risk preferences from pairwise trajectory comparisons — no manual reward engineering needed.
@@ -46,22 +46,4 @@ drive.mount('/content/drive')
 - Train: 2015–2022 · Val: Jan–Jun 2023 · Test: Jul 2023–Dec 2024
 - 0.1% transaction cost, daily rebalancing, $1M initial capital
 
-## Team
 
-| Member | Primary Role |
-|---|---|
-| Teammate A | Repo lead · `src/` architecture · PPO base training |
-| Teammate B | Data pipeline · Env validation · Preference labeling |
-| Teammate C | Reward model training · RLHF data generation |
-| Teammate D | RLHF fine-tuning · Evaluation · Visualization · Report |
-
-## Due dates
-
-| Milestone | Date |
-|---|---|
-| Env + data complete | Mar 30 |
-| Base PPO trained (3 seeds) | Apr 6 |
-| Reward models trained | Apr 13 |
-| RLHF fine-tuning complete | Apr 20 |
-| Full evaluation + report | **Apr 27** |
-| Presentation | May 1 or May 4 |
