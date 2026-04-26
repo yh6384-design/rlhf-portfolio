@@ -13,3 +13,19 @@ Time Name Source Details
 2026/04/03 Nancy src/envs.py Changed buy_cost_pct and sell_cost_pct from single float to list of 30 floats — FinRL indexes cost_pct per stock, single float caused TypeError.
 2026/04/04 Nancy 03_base_training.ipynb Trained base PPO agent for 500k timesteps across 3 seeds. Best val Sharpe scores: 1.21, 1.21, 0.40 (mean 0.94). All 3 checkpoints saved to Drive at results/checkpoints/base_agent_seed{1,2,3}.zip. Next step should use base_agent_seed2.zip (best val Sharpe = 1.2097) for preference data generation in the next step.
 2026/04/06 Leo 03_rlhf_data.ipynb Build PPO trajectories with base_agent_seed2.zip and create preference dataset. All data saved to /Project/data/preferences.parquet and /Project/data/trajectory.parquet
+2026/04/25 Nancy src/envs.py Removed 'close' from tech_indicator_list — FinRL already places real prices at state[1:31]; including it again caused scale mismatch with normalized features.
+2026/04/25 Nancy src/envs.py Added 'close_norm' to tech_indicator_list — z-score normalized close price gives agent a properly scaled price-level learning signal alongside other normalized features.
+2026/04/25 Nancy src/envs.py Changed hmax from 1000 to 100 — with real dollar prices (~$150–$400/share), hmax=1000 allowed trades up to $500k/stock/step causing over-leveraging and bankruptcy. hmax=100 limits max trade to ~$50k/stock/step (5% of $1M), realistic for daily rebalancing.
+2026/04/25 Nancy src/envs.py Changed state_space from 361 to 361 (kept same) — removed 'close' from tech features but added 'close_norm', net change = 0, state_space stays 1+30+30+30×10=361.
+2026/04/25 Nancy src/envs.py Fixed RLHFRewardWrapper.step() daily_return calculation — was using raw reward/1e-4 (dollar P&L) giving wrong percentage returns for Sharpe/drawdown. Now uses asset_memory[-1]/prev_value-1 for correct real dollar percentage return.
+2026/04/25 Nancy src/envs.py Removed SafeStockTradingEnv wrapper — not needed with real prices since FinRL's native guardrail (available_amount = cash // price) correctly prevents cash going negative when prices are real dollars.
+2026/04/25 Nancy notebooks/01_data.ipynb Fixed Cell 8 normalization — was z-score normalizing ALL features including close, causing FinRL to trade at fake ~$2 prices instead of real $150–$400 prices, leading to bankruptcy artifacts. Now keeps close as real dollar prices, normalizes all other features only.
+2026/04/25 Nancy notebooks/01_data.ipynb Added close_norm column in Cell 8 — z-score normalized version of close price saved alongside real close, used as learning signal in tech_indicator_list.
+2026/04/25 Nancy notebooks/01_data.ipynb Added data pipeline validation cell — checks close≈real dollars, other features≈normalized, FinRL env builds correctly, cash stays non-negative over 50 max-buy steps.
+2026/04/25 Nancy notebooks/02_env.ipynb Updated FEATURE_NAMES to include 'close_norm' after 'close' — required for wide-to-long conversion to pick up the new column from parquet.
+2026/04/25 Nancy notebooks/03_base_training.ipynb Updated FEATURE_NAMES to include 'close_norm' after 'close' — same as 02_env fix.
+2026/04/25 Nancy notebooks/03_base_training.ipynb Fixed SharpeSaveCallback._on_step() — was computing Sharpe from reward/1e-4 (dollar P&L scale). Now uses asset_memory[-1]/prev_value-1 for correct percentage daily returns.
+2026/04/25 Nancy notebooks/03_base_training.ipynb Retrained base PPO with real prices and hmax=100 — new val Sharpe: seed1=2.27, seed2=2.59 (best), seed3=2.04, mean=2.30±0.23. Previous run had mean=0.94 due to normalized price bug.
+2026/04/25 Nancy notebooks/04_rlhf_data.ipynb Updated FEATURE_NAMES to include 'close_norm' after 'close'.
+2026/04/25 Nancy notebooks/05_finetuning.ipynb Updated FEATURE_NAMES to include 'close_norm' after 'close'.
+
