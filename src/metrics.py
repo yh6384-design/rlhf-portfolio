@@ -111,7 +111,7 @@ def full_metrics_table(agents: dict, daily_returns_map: dict, weight_history_map
 
     Returns
     -------
-    pd.DataFrame — one row per agent, six metric columns.
+    pd.DataFrame — one row per agent, seven metric columns.
     """
     rows = []
     for name in agents:
@@ -124,6 +124,7 @@ def full_metrics_table(agents: dict, daily_returns_map: dict, weight_history_map
             "sharpe_ratio":      sharpe_ratio(r),
             "max_drawdown":      max_drawdown(r),
             "calmar_ratio":      calmar_ratio(r),
+            "volatility":        annualized_volatility(r),
             "avg_turnover":      average_daily_turnover(w) if w is not None else float("nan"),
         })
     return pd.DataFrame(rows).set_index("agent")
