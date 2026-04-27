@@ -7,9 +7,12 @@ Each function takes two trajectory summary dicts (from src/metrics.trajectory_su
 and returns 1 if traj_A is preferred, 0 if traj_B is preferred.
 
 Summary dict keys: annualized_return, sharpe, max_drawdown, volatility, calmar, turnover
+
+IMPORTANT: These functions must stay in sync with the label functions in
+04_rlhf_data.ipynb Cell 16. Any change here requires rerunning 04 and 05.
 """
 
-from typing import Dict, Tuple
+from typing import Dict
 
 TrajSummary = Dict[str, float]
 
@@ -19,6 +22,13 @@ PERSONAS = ["conservative", "balanced", "aggressive"]
 # ─── Individual persona functions ──────────────────────────────────────────────
 
 def conservative_preference(traj_a: TrajSummary, traj_b: TrajSummary) -> int:
+    """
+    Conservative (Retiree) persona.
+
+    Primary:   prefer lower max drawdown (>2pp difference = clear preference)
+    Secondary: prefer lower volatility
+    Tertiary:  prefer higher Sharpe
+    """
     mdd_a = traj_a["max_drawdown"]
     mdd_b = traj_b["max_drawdown"]
 
@@ -39,24 +49,33 @@ def balanced_preference(traj_a: TrajSummary, traj_b: TrajSummary) -> int:
     """
     Balanced (Moderate) persona.
 
-    Primary : maximize Sharpe ratio (risk-adjusted return).
-    Secondary: among similar Sharpe (<= 0.1 difference), prefer higher return.
+    Primary:   prefer higher Sharpe (>0.1 difference = clear preference)
+    Secondary: prefer higher annualized return
+    Tertiary:  prefer higher Calmar
     """
     sharpe_a = traj_a["sharpe"]
     sharpe_b = traj_b["sharpe"]
 
-    if abs(sharpe_a - sharpe_b) <= 0.1:
-        return 1 if traj_a["annualized_return"] >= traj_b["annualized_return"] else 0
+    if sharpe_a > sharpe_b + 0.10:
+        return 1
+    if sharpe_b > sharpe_a + 0.10:
+        return 0
 
-    return 1 if sharpe_a >= sharpe_b else 0
+    if traj_a["annualized_return"] > traj_b["annualized_return"] + 1e-8:
+        return 1
+    if traj_b["annualized_return"] > traj_a["annualized_return"] + 1e-8:
+        return 0
+
+    return int(traj_a["calmar"] >= traj_b["calmar"])
 
 
 def aggressive_preference(traj_a: TrajSummary, traj_b: TrajSummary) -> int:
     """
     Aggressive (Growth) persona.
 
-    Primary : maximize annualized return, subject to max drawdown <= 30% cap.
-    Secondary: among similar returns (<= 1% absolute difference), prefer higher Calmar.
+    Primary:   drawdown cap at 30% — disqualify trajectories exceeding it
+    Secondary: prefer higher annualized return (>1% difference = clear preference)
+    Tertiary:  prefer higher Calmar
     """
     ret_a = traj_a["annualized_return"]
     ret_b = traj_b["annualized_return"]
@@ -65,7 +84,6 @@ def aggressive_preference(traj_a: TrajSummary, traj_b: TrajSummary) -> int:
 
     DRAWDOWN_CAP = 0.30
 
-    # Disqualify trajectories exceeding drawdown cap
     a_ok = mdd_a <= DRAWDOWN_CAP
     b_ok = mdd_b <= DRAWDOWN_CAP
 
@@ -73,12 +91,13 @@ def aggressive_preference(traj_a: TrajSummary, traj_b: TrajSummary) -> int:
         return 1
     if b_ok and not a_ok:
         return 0
-    # Both exceed or both within cap — compare on return
 
-    if abs(ret_a - ret_b) <= 0.01:
-        return 1 if traj_a["calmar"] >= traj_b["calmar"] else 0
+    if ret_a > ret_b + 0.01:
+        return 1
+    if ret_b > ret_a + 0.01:
+        return 0
 
-    return 1 if ret_a >= ret_b else 0
+    return int(traj_a["calmar"] >= traj_b["calmar"])
 
 
 # ─── Dispatch table ────────────────────────────────────────────────────────────
