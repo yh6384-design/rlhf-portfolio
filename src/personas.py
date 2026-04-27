@@ -19,38 +19,20 @@ PERSONAS = ["conservative", "balanced", "aggressive"]
 # ─── Individual persona functions ──────────────────────────────────────────────
 
 def conservative_preference(traj_a: TrajSummary, traj_b: TrajSummary) -> int:
-    """
-    Conservative (Retiree) persona.
-
-    Primary : minimize maximum drawdown.
-               Strongly prefers drawdown < 10% over drawdown > 15%,
-               even at the cost of lower returns.
-    Secondary: among similar drawdown (<= 2pp difference), prefer lower volatility.
-    """
     mdd_a = traj_a["max_drawdown"]
     mdd_b = traj_b["max_drawdown"]
 
-    # Primary: hard preference when drawdown thresholds clearly differ
-    a_safe = mdd_a < 0.10
-    b_safe = mdd_b < 0.10
-    a_risky = mdd_a > 0.15
-    b_risky = mdd_b > 0.15
-
-    if a_safe and not b_safe:
+    if mdd_a < mdd_b - 0.02:
         return 1
-    if b_safe and not a_safe:
+    if mdd_b < mdd_a - 0.02:
         return 0
-    if a_risky and not b_risky:
-        return 0
-    if b_risky and not a_risky:
+
+    if traj_a["volatility"] < traj_b["volatility"] - 1e-8:
         return 1
+    if traj_b["volatility"] < traj_a["volatility"] - 1e-8:
+        return 0
 
-    # Secondary: similar drawdown → prefer lower volatility
-    if abs(mdd_a - mdd_b) <= 0.02:
-        return 1 if traj_a["volatility"] <= traj_b["volatility"] else 0
-
-    # Otherwise: prefer lower drawdown
-    return 1 if mdd_a <= mdd_b else 0
+    return int(traj_a["sharpe"] >= traj_b["sharpe"])
 
 
 def balanced_preference(traj_a: TrajSummary, traj_b: TrajSummary) -> int:
