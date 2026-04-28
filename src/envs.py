@@ -41,7 +41,7 @@ import gymnasium as gym
 from collections import deque
 from typing import Optional, Any
 
-TRAJECTORY_WINDOW = 20
+TRAJECTORY_WINDOW = 60
 
 DOW30_TICKERS = [
     "AAPL", "AMGN", "AXP", "BA",  "CAT",  "CRM",  "CSCO", "CVX",
