@@ -48,24 +48,21 @@ def conservative_preference(traj_a: TrajSummary, traj_b: TrajSummary) -> int:
 def balanced_preference(traj_a: TrajSummary, traj_b: TrajSummary) -> int:
     """
     Balanced (Moderate) persona.
-
-    Primary:   prefer higher Sharpe (>0.1 difference = clear preference)
-    Secondary: prefer higher annualized return
+    Primary:   drawdown cap at 20% — disqualify trajectories exceeding it
+    Secondary: prefer higher Sharpe
     Tertiary:  prefer higher Calmar
     """
-    sharpe_a = traj_a["sharpe"]
-    sharpe_b = traj_b["sharpe"]
-
-    if sharpe_a > sharpe_b + 0.10:
+    DRAWDOWN_CAP = 0.20
+    a_ok = traj_a["max_drawdown"] <= DRAWDOWN_CAP
+    b_ok = traj_b["max_drawdown"] <= DRAWDOWN_CAP
+    if a_ok and not b_ok:
         return 1
-    if sharpe_b > sharpe_a + 0.10:
+    if b_ok and not a_ok:
         return 0
-
-    if traj_a["annualized_return"] > traj_b["annualized_return"] + 1e-8:
+    if traj_a["sharpe"] > traj_b["sharpe"] + 1e-8:
         return 1
-    if traj_b["annualized_return"] > traj_a["annualized_return"] + 1e-8:
+    if traj_b["sharpe"] > traj_a["sharpe"] + 1e-8:
         return 0
-
     return int(traj_a["calmar"] >= traj_b["calmar"])
 
 
